@@ -97,6 +97,26 @@ textarea.fi{min-height:150px;resize:vertical;line-height:1.7}
 .stat-n{font-family:'Noto Serif KR',serif;font-size:1.4rem;font-weight:700;color:var(--gold2)}
 .stat-l{font-size:.6rem;color:var(--mist);margin-top:2px;text-transform:uppercase;letter-spacing:.5px}
 
+
+/* 해결방향 */
+.sol-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.sol-card{background:#fff;border-radius:14px;border:1px solid var(--border);overflow:hidden;transition:transform .15s}
+.sol-card:hover{transform:translateY(-2px)}
+.sol-card.highlight{border-color:var(--gold);box-shadow:0 4px 16px rgba(201,168,76,.15)}
+.sol-header{padding:12px 16px;display:flex;align-items:center;gap:8px}
+.sol-icon{font-size:1.2rem}
+.sol-title{font-family:'Noto Serif KR',serif;font-size:.9rem;font-weight:700;color:#fff}
+.sol-count{font-size:.65rem;color:rgba(255,255,255,.7);margin-top:1px}
+.sol-keywords{display:flex;flex-wrap:wrap;gap:4px;padding:10px 16px;border-bottom:1px solid var(--border)}
+.sol-kw{font-size:.68rem;font-weight:700;padding:2px 8px;border-radius:12px;cursor:pointer}
+.sol-kw.active{opacity:1}
+.sol-kw.inactive{opacity:.4}
+.sol-body{padding:12px 16px}
+.sol-section{margin-bottom:8px}
+.sol-section-label{font-size:.62rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px}
+.sol-items{display:flex;flex-direction:column;gap:3px}
+.sol-item{font-size:.75rem;color:var(--ink);line-height:1.5;padding-left:10px;position:relative}
+.sol-item::before{content:'→';position:absolute;left:0;color:var(--muted);font-size:.65rem}
 /* 맥락 모달 */
 .mov{display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.8);align-items:center;justify-content:center;padding:16px}
 .mov.on{display:flex}
@@ -184,6 +204,106 @@ function cls(w){for(const[t,ks]of Object.entries(TM)){if(ks.some(k=>w.includes(k
 
 const STOP=new Set('있어,없어,너무,정말,그냥,이게,이거,거기,이렇게,저렇게,합니다,있습니다,없습니다,됩니다,해야,해서,하고,하는,하면,하지,하기,그리고,그런데,그래서,하지만,때문에,위해서,위한,대한,관련,통해,따라,이런,저런,어떤,같은,다른,많은,적은,필요,현재,현장,지금,아직,안됨,안되,못함,못해,안해,있음,없음,됨,함,함께,모두,전체,각각,및,등,이,가,을,를,은,는,에,의,와,과,도,만,로,으로,에서,에게,부터,까지,대해,입니다,이다,했다,한다,된다,이름,역할,소속,선택,입력,의견,키워드,자유,통합돌봄,민관협력,워크숍,수집,재가,병원,복지관,당사자,보호자,테이블,구분,행정,보건,안내,심각,어려움,부족,어르신,노인,지역,사업,기관,우리,분들,경우,내용,업무,진행,운영,상황,이용,대상,활동,생활,가정,사회,수행,추진,통합,돌봄'.split(','));
 
+
+const SOLUTIONS = [
+  {
+    theme: '연계·협력',
+    icon: '🔗',
+    color: '#185FA5',
+    keywords: ['연계','협력','창구','정보공유','의뢰','네트워크','조정'],
+    short: [
+      '월 1회 민관 통합 사례회의 정례화',
+      '기관별 담당자 연락망 구축 (카카오채널 등)',
+      '퇴원 전 지역기관 참여 회의 시범 운영',
+    ],
+    long: [
+      '의료-복지 연계 코디네이터 배치',
+      '통합돌봄 정보 공유 시스템(플랫폼) 구축',
+      '퇴원환자 자동 연계 프로토콜 제도화',
+    ]
+  },
+  {
+    theme: '인력 부족',
+    icon: '👥',
+    color: '#1A3328',
+    keywords: ['인력','간호사','요양보호사','종사자','담당자','처우','급여'],
+    short: [
+      '전담 인력 업무 재배분 및 우선순위 조정',
+      '돌봄종사자 처우 개선 지원금 신청',
+      '자원봉사·민간 인력 활용 체계 마련',
+    ],
+    long: [
+      '통합돌봄 전담팀 신설 및 정원 확보',
+      '방문건강관리 간호사 인력 기준 상향',
+      '돌봄종사자 급여 현실화 및 처우 개선',
+    ]
+  },
+  {
+    theme: '야간·긴급 공백',
+    icon: '🌙',
+    color: '#8B2252',
+    keywords: ['야간','공백','응급','긴급','주말','연락'],
+    short: [
+      '긴급 연락망 카드 제작 및 배포',
+      '야간 위기상황 대응 매뉴얼 수립',
+      '119·정신건강위기상담 연계 강화',
+    ],
+    long: [
+      '24시간 통합돌봄 콜센터 운영',
+      '야간 돌봄 당직제 시범 도입',
+      '위기 대응 온콜 체계 구축',
+    ]
+  },
+  {
+    theme: '예산·수가',
+    icon: '💰',
+    color: '#9A6B00',
+    keywords: ['예산','수가','비용','급여','부담금','재정','칸막이'],
+    short: [
+      '복지-보건 칸막이 예산 협의체 구성',
+      '통합사례관리 수가 신설 건의',
+      '방문재활 수가 시범사업 참여 검토',
+    ],
+    long: [
+      '통합돌봄 전용 예산 편성 체계 마련',
+      '민관협력 사업 매칭펀드 확보',
+      '저소득층 본인부담금 경감 지원',
+    ]
+  },
+  {
+    theme: '정보·자원 부재',
+    icon: '🗺',
+    color: '#C0392B',
+    keywords: ['자원','정보','맵','목록','DB','체계','안내'],
+    short: [
+      '지역 내 돌봄 자원 목록 공동 작성',
+      '서비스 안내 리플렛 통합 제작',
+      '담당자용 자원 연계 가이드 배포',
+    ],
+    long: [
+      '지역사회 자원 맵 구축 및 정기 업데이트',
+      '통합 안내 창구(원스톱) 운영',
+      '주민 대상 돌봄 서비스 포털 개발',
+    ]
+  },
+  {
+    theme: '당사자 중심',
+    icon: '🏠',
+    color: '#0F6E56',
+    keywords: ['당사자','가족','보호자','독거','치매','재가'],
+    short: [
+      '서비스 이용자 만족도 조사 정기 실시',
+      '가족 돌봄자 휴식 지원 프로그램 연계',
+      '재가-시설 중간 단계 서비스 발굴',
+    ],
+    long: [
+      '당사자 참여 서비스 설계 체계 마련',
+      '가족 돌봄자 지원 센터 운영',
+      '재가 중심 돌봄 체계 강화 및 시설 대안 확대',
+    ]
+  },
+];
+
 function tok(t){return t.replace(/\t/g,' ').split(/[\n,，·.!?;:(){}"'\/\\]+/).flatMap(s=>s.split(/\s+/)).map(w=>w.trim().replace(/^[·\-*#\d]+/,'').trim()).filter(w=>w.length>=2&&!STOP.has(w)&&!/^\d+$/.test(w));}
 function cntW(tokens){const m={};tokens.forEach(w=>{m[w]=(m[w]||0)+1});return Object.entries(m).sort((a,b)=>b[1]-a[1]);}
 function parseRows(text){const rows=[];for(const line of text.split('\n')){if(!line.trim())continue;const c=line.split('\t');const tc=c[0]?.trim(),oc=c[3]?.trim()||c[2]?.trim()||c[1]?.trim()||'';if(tc&&oc&&tc.length<=15&&!/^이름|^역할|^소속|^의견|^키워드|^테이블/.test(tc)&&!/^[A-Z]/.test(tc))rows.push({t:tc,o:oc});}return rows;}
@@ -231,6 +351,7 @@ function analyze(){
   addTab(bar,area,'◎ 마인드맵',()=>mmPanel());
   addTab(bar,area,'≡ 순위',()=>rankPanel(_all));
   addTab(bar,area,'◈ 공통 키워드',()=>commonPanel());
+  addTab(bar,area,'💡 해결방향',()=>solutionPanel());
   addSep(bar);
   _gps.forEach(g=>{
     const sub=_tbs.filter(t=>grp(t)===g).map(t=>({n:t,tk:_tmap[t].tk}));
@@ -439,6 +560,42 @@ function groupPanel(tokens,groupName,sub){
   const wc=netPanel(tokens,groupName+' 합본');
   const cards=sub.map(s=>{const sc=cntW(s.tk).slice(0,8);return`<div class="sub-card"><div class="sub-card-title">${s.n}</div><div class="sub-tags">${sc.map(([w])=>{const col=TH[cls(w)]||TH['기타'];return`<span class="stag" style="background:${col.bg};color:${col.fg}">${w}</span>`;}).join('')}</div></div>`;}).join('');
   return wc+`<div class="sub-grid">${cards}</div>`;
+}
+
+
+// ── 해결방향 패널 ──
+function solutionPanel(){
+  const wordCounts = {};
+  cntW(_all).forEach(([w,c])=>{ wordCounts[w]=c; });
+
+  // 언급 많은 순 정렬
+  const sorted = SOLUTIONS.map(sol=>({
+    ...sol,
+    cnt: sol.keywords.reduce((s,k)=>s+(wordCounts[k]||0),0)
+  })).sort((a,b)=>b.cnt-a.cnt);
+
+  const items = sorted.map((sol,i)=>{
+    const kwStr = sol.keywords.filter(k=>wordCounts[k]>0).slice(0,4).join('·');
+    const allItems = [...sol.short, ...sol.long];
+    return `<div style="padding:14px 0;border-bottom:1px solid var(--border);display:flex;gap:14px;align-items:flex-start">
+      <div style="width:28px;height:28px;border-radius:50%;background:${sol.color};color:#fff;font-size:.8rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px">${i+1}</div>
+      <div style="flex:1">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+          <span style="font-size:.95rem;font-weight:700;color:${sol.color}">${sol.icon} ${sol.theme}</span>
+          ${sol.cnt>0?`<span style="font-size:.65rem;background:${sol.color}18;color:${sol.color};padding:1px 7px;border-radius:10px;font-weight:700">${sol.cnt}회 언급</span>`:''}
+          ${kwStr?`<span style="font-size:.65rem;color:var(--muted)">${kwStr}</span>`:''}
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          ${allItems.map(s=>`<div style="font-size:.8rem;color:var(--ink);line-height:1.6;padding-left:12px;position:relative"><span style="position:absolute;left:0;color:${sol.color};font-weight:700">→</span>${s}</div>`).join('')}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  return `<div class="p-label">오늘 많이 언급된 순서 · 키워드 클릭하면 원문 보기</div>
+<div style="background:#fff;border-radius:14px;border:1px solid var(--border);padding:4px 16px">
+  ${items}
+</div>`;
 }
 
 // ── 맥락 보기 ──
